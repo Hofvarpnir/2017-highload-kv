@@ -14,7 +14,7 @@ public class MyFileDAO implements MyDAO {
     }
 
     @NotNull
-    private File getFile(@NotNull final String key){
+    private File getFile(@NotNull final String key) throws IllegalArgumentException {
         return new File(dir, key);
     }
 

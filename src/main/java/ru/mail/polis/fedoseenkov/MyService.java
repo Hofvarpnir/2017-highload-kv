@@ -18,7 +18,7 @@ public class MyService implements KVService {
     private final MyDAO dao;
 
     @NotNull
-    private static String extractId(@NotNull final String query){
+    private static String extractId(@NotNull final String query) {
           if (!query.startsWith(PREFIX)) {
             throw new IllegalArgumentException("bad string");
         }
@@ -48,7 +48,7 @@ public class MyService implements KVService {
                 "/v0/entity",
                 http -> {
                     final String id = extractId(http.getRequestURI().getQuery());
-                    if (id.equals("")) http.sendResponseHeaders(400, 0);
+                    if ("".equals(id)) http.sendResponseHeaders(400, 0);
                     else {
                         switch (http.getRequestMethod()) {
                             case "GET":
