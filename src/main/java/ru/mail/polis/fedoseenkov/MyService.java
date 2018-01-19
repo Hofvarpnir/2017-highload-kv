@@ -8,6 +8,8 @@ import ru.mail.polis.KVService;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.NoSuchElementException;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class MyService implements KVService {
     private static final String PREFIX = "id=";
@@ -74,13 +76,22 @@ public class MyService implements KVService {
                                     break;
                                 }
                                 else {
-                                    final byte[] putValue = new byte[contentLenght];
-                                    if (http.getRequestBody().read(putValue) != putValue.length) {
-                                        throw new IOException("Can't read file at once.");
-                                    }
+                                    try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                         InputStream in = http.getRequestBody()) {
+                                        byte[] buffer = new byte[1024];
+                                        while (true) {
+                                            int readBytes = in.read(buffer);
+                                            if (readBytes < 0) {
+                                                break;
+                                            }
+                                            out.write(buffer, 0, readBytes);
+                                        }
 
-                                    dao.upsert(id, putValue);
-                                    http.sendResponseHeaders(201, 0);
+                                        dao.upsert(id, out.toByteArray());
+                                        http.sendResponseHeaders(201, 0);
+                                    } catch (IOException e) {
+                                        http.sendResponseHeaders(500, 0);
+                                    }
                                     break;
                                 }
                             default:
