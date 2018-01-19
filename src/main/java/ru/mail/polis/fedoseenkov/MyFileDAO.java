@@ -3,6 +3,8 @@ package ru.mail.polis.fedoseenkov;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 
 public class MyFileDAO implements MyDAO {
@@ -21,14 +23,7 @@ public class MyFileDAO implements MyDAO {
     @NotNull
     @Override
     public byte[] get(@NotNull final String key) throws NoSuchElementException, IllegalArgumentException, IOException {
-        final File file = getFile(key);
-        final byte[] value = new byte[(int) file.length()];
-        try(InputStream is = new FileInputStream(file)) {
-            if (is.read(value) != value.length) {
-                throw new IOException("Can't read file at once.");
-            }
-        }
-        return value;
+        return Files.readAllBytes(Paths.get(dir + File.separator + key));
     }
 
     @NotNull
