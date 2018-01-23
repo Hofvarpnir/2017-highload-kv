@@ -1,9 +1,11 @@
 # Ignore everything
 *
 
-# But not Java files...
+# But not Java and LUA files...
 !.gitignore
 !*.java
+!*.lua
+!*.md
 
 # ...even if they are in subdirectories
 !*/
